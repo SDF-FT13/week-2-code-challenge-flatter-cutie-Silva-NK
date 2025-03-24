@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
     getCharacters ();
 
+    /* I changed the image-URLs of  Mr. Cutie an Mx. Monkey in the db.json since the originals were not available. */
+
     let allCharacters = [];
     let currentCharacter = null;
     
