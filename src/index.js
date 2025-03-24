@@ -48,6 +48,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 currentCharacter.votes += sumOfVotes;
                 voteCount.textContent= currentCharacter.votes;
                 voteInput.value = "";
+
+                fetch(`http://localhost:3000/characters/${currentCharacter.id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ votes: currentCharacter.votes })
+                })
+                .then(response => response.json())
+                .catch(error => console.error("Error updating votes: ", error));
             }
         }
     });
@@ -56,33 +64,53 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (currentCharacter) {
             currentCharacter.votes = 0;
             voteCount.textContent = 0;
+
+            fetch(`http://localhost:3000/characters/${currentCharacter.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ votes: 0 })
+            })
+            .then(response => response.json())
+            .catch(error => console.error("Error resetting votes: ", error));
         }
     });
 
     characterForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
-        const newCharName = document.getElementById("new-name").value;
+        const newCharName = document.getElementById("new-name").value; //Change name id to new-name to prevent overlap with earlier name id.
         const newCharImage = document.getElementById("image-url").value;
 
         if (newCharName.trim() !== "" && newCharImage.trim() !== "") {
             const newCharacter = {
-                id: allCharacters.length + 1,
+                // id: allCharacters.length + 1,
                 name: newCharName,
                 image: newCharImage,
                 votes: 0
             };
 
-            allCharacters.push(newCharacter);
+            fetch("http://localhost:3000/characters", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newCharacter)
+            })
+            .then(response => response.json())
+            .then(savedCharacter => {
+                allCharacters.push(savedCharacter);
+
+            //allCharacters.push(newCharacter);
 
             const span = document.createElement("span");
-            span.textContent = newCharacter.name;
-            span.addEventListener("click", () => showCharacterInfo(newCharacter));
+            span.textContent = savedCharacter.name; // span.textContent = newCharacter.name;
+            span.addEventListener("click", () => showCharacterInfo(savedCharacter)); // span.addEventListener("click", () => showCharacterInfo(newCharacter));
             characterBar.appendChild(span);
 
-            showCharacterInfo(newCharacter);
+            showCharacterInfo(savedCharacter); // showCharacterInfo(newCharacter);
 
             characterForm.reset();
-        }
+        })
+        .catch(error => console.error("Error adding new character: ", error));
+    }
     });
+
 });
