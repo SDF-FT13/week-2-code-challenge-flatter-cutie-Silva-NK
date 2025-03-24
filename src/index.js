@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     const characterInfo = document.getElementById("detailed-info");
     const characterBar =  document.getElementById("character-bar");
+    const voteCount =  document.getElementById("vote-count");
+    const voteForm =  document.getElementById("votes-form");
+    const voteInput =  document.getElementById("votes");
+    const resetBtn =  document.getElementById("reset-btn");
 
     function getCharacters() {
         fetch("http://localhost:3000/characters")
@@ -26,18 +30,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function showCharacterInfo(character) {
-        characterInfo.innerHTML = "";
+        document.getElementById("name").textContent = character.name;
+        document.getElementById("image").src = character.image;
+        document.getElementById("image").alt = character.name;
+        document.getElementById("vote-count").textContent = character.votes;
 
-        const characterName = document.createElement("p");
-        characterName.id = "name";
-        characterName.textContent = character.name;
-
-        const characterImage = document.createElement("img");
-        characterImage.id = "image";
-        characterImage.src = character.image;
-        characterImage.alt = character.name;
-
-        characterInfo.appendChild(characterName);
-        characterInfo.appendChild(characterImage);
+        currentCharacter = character;
     }
+
+    voteForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (currentCharacter) {
+            const sumOfVotes = parseInt(voteInput.value);
+            if(!isNaN(sumOfVotes) && sumOfVotes > 0) {
+                currentCharacter.votes += sumOfVotes;
+                voteCount.textContent= currentCharacter.votes;
+                voteInput.value = "";
+            }
+        }
+    });
+
+    resetBtn.addEventListener("click", () => {
+        if (currentCharacter) {
+            currentCharacter.votes = 0;
+            voteCount.textContent = 0;
+        }
+    });
 });
