@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     getCharacters ();
 
     let allCharacters = [];
+    let currentCharacter = null;
     
     const characterInfo = document.getElementById("detailed-info");
     const characterBar =  document.getElementById("character-bar");
@@ -71,6 +72,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({ votes: 0 })
             })
             .then(response => response.json())
+            .then(() => {
+                currentCharacter.votes = 0;
+                voteCount.textContent = 0;
+            })
             .catch(error => console.error("Error resetting votes: ", error));
         }
     });
