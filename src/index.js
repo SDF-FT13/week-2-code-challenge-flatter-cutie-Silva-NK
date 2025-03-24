@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const voteForm =  document.getElementById("votes-form");
     const voteInput =  document.getElementById("votes");
     const resetBtn =  document.getElementById("reset-btn");
+    const characterForm = document.getElementById("character-form");
 
     function getCharacters() {
         fetch("http://localhost:3000/characters")
@@ -55,6 +56,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (currentCharacter) {
             currentCharacter.votes = 0;
             voteCount.textContent = 0;
+        }
+    });
+
+    characterForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const newCharName = document.getElementById("new-name").value;
+        const newCharImage = document.getElementById("image-url").value;
+
+        if (newCharName.trim() !== "" && newCharImage.trim() !== "") {
+            const newCharacter = {
+                id: allCharacters.length + 1,
+                name: newCharName,
+                image: newCharImage,
+                votes: 0
+            };
+
+            allCharacters.push(newCharacter);
+
+            const span = document.createElement("span");
+            span.textContent = newCharacter.name;
+            span.addEventListener("click", () => showCharacterInfo(newCharacter));
+            characterBar.appendChild(span);
+
+            showCharacterInfo(newCharacter);
+
+            characterForm.reset();
         }
     });
 });
